@@ -1,6 +1,10 @@
-# Sid's Farm
+# Sid's Farm Clone
 
 Sid's Farm started as a simple promise from a father to his son to provide him with the purest, safest milk possible.
+
+We're setting the benchmark for doubt-free dairy: backed by science, sustained by effort, and a promise to protect every family we serve.
+
+
 
 # Created with React + Vite
 
@@ -11,7 +15,11 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-# Project Images 
+  
+
+# Website Images 
+
+<img width="2940" height="1666" alt="image" src="https://github.com/user-attachments/assets/e6f829a6-5242-4cfb-acde-925febe73fbf" />
 
 <img width="2940" height="1666" alt="image" src="https://github.com/user-attachments/assets/60bdec98-e4f9-4e1a-84f0-1167c3d2d853" />
 
@@ -21,6 +29,5 @@ Currently, two official plugins are available:
 
 <img width="2940" height="1666" alt="image" src="https://github.com/user-attachments/assets/e8e7932d-6aae-40d9-b506-a8aa366a7353" />
 
-<img width="2940" height="1666" alt="image" src="https://github.com/user-attachments/assets/c202c78c-55b0-4d57-aba5-46b0a35014c2" />
 
 
