@@ -2,6 +2,7 @@
 
 Sid's Farm started as a simple promise from a father to his son to provide him with the purest, safest milk possible.
 
+Tested daily for antibiotics, hormones, and additives - it takes more tests than any college kid! Only milk that aces every test is delivered to your doorstep.
 We're setting the benchmark for doubt-free dairy: backed by science, sustained by effort, and a promise to protect every family we serve.
 
 
