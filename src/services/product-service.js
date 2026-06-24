@@ -1,9 +1,15 @@
 import axios from "axios";
+import {API_BASE_URL} from "../config.js";
 
 export class ProductService {
-    static url = "http://localhost:9000/api/products";
+    static url = `${API_BASE_URL}/api/products`;
 
-    static getAllProducts() {
+    static getAllProducts({page, limit} = {}) {
+        // When page is provided the API returns a paginated payload,
+        // otherwise it returns the full list (used by the admin screen).
+        if (page) {
+            return axios.get(`${ProductService.url}`, {params: {page, limit}});
+        }
         return axios.get(`${ProductService.url}`);
     }
 

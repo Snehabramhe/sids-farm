@@ -30,39 +30,32 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className="bg-gray-800 text-white">
+            <nav className="bg-gray-900 text-white shadow-md sticky top-0 z-30">
                 <div className="container mx-auto flex items-center justify-between py-4 px-4">
                     {/* Logo */}
                     <div className="text-2xl font-bold">
-                        <Link to="/" className="hover:text-gray-300">
-                            Sids Farm
+                        <Link to="/home" className="flex items-center gap-2 hover:text-green-400 transition-colors">
+                            <span className="flex items-center justify-center h-8 w-8 rounded-full bg-green-500 text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                     className="h-5 w-5">
+                                    <path d="M7 2h10l-.6 3H7.6L7 2Zm-.2 4h10.4l1.2 13.2A2 2 0 0 1 16.4 22H7.6a2 2 0 0 1-1.99-2.8L6.8 6Zm2.2 6a1 1 0 0 0-1 1v3a1 1 0 1 0 2 0v-3a1 1 0 0 0-1-1Z"/>
+                                </svg>
+                            </span>
+                            <span>Sid&apos;s Farm</span>
                         </Link>
                     </div>
 
                     {/* Navigation Links */}
                     <ul className="flex space-x-6 items-center">
-
-                        {/* <li>
+                        <li>
                             <Link
                                 to="/products/show-product"
-                                className="hover:text-gray-300 transition-colors duration-300"
+                                className="hover:text-green-400 transition-colors duration-300"
                             >
                                 Products
                             </Link>
                         </li>
                         <li>
-                            <Link
-                                to="/products/admin-product"
-                                className="hover:text-gray-300 transition-colors duration-300"
-                            >
-                                Admin
-                            </Link>
-                        </li>*/}
-                        <li>
-                            {/* <div className="flex">
-                                <span>Hi {user?.username}</span>
-                                <img src={user?.imageUrl} alt="" width={30} height={30} className="rounded-full ml-2"/>
-                            </div>*/}
                             <div className="relative">
                                 <button
                                     className="text-gray-300 hover:text-white px-3 py-2 text-sm flex items-center"
@@ -126,17 +119,14 @@ const Navbar = () => {
                         </li>
                         <li className="relative inline-block cursor-pointer"
                             onClick={() => navigate("/carts/page")}>
-                            <ShoppingCartIcon title={'Cart'} className="size-6 text-white"/>
-                            <span
-                                className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
-                                {cartCount}
-                            </span>
+                            <ShoppingCartIcon title={'Cart'} className="size-6 text-white hover:text-green-400 transition-colors"/>
+                            {cartCount > 0 && (
+                                <span
+                                    className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
+                                    {cartCount}
+                                </span>
+                            )}
                         </li>
-                        {/*<li>
-                            <p className="cursor-pointer" onClick={clickSignOut}>
-                                <PowerIcon title={'SignOut'} className="size-6 text-green-500"/>
-                            </p>
-                        </li>*/}
                     </ul>
                 </div>
             </nav>

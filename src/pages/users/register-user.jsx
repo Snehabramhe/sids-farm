@@ -2,7 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {Link, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {selectRegisterUserSuccess, userActions} from "../../redux/user/user.slice.js";
-import RegisterImg from "../../assets/images/register-img.jpg";
+import {EyeIcon, EyeSlashIcon} from "@heroicons/react/24/outline";
+import LoginImg from "../../assets/images/login-img.png";
 
 const RegisterUser = () => {
     const dispatch = useDispatch();
@@ -11,6 +12,7 @@ const RegisterUser = () => {
     // get State data from redux
     const isRegistrationSuccess = useSelector(selectRegisterUserSuccess);
 
+    const [showPassword, setShowPassword] = useState(false);
     const [user, setUser] = useState({
         username: "",
         email: "",
@@ -56,7 +58,7 @@ const RegisterUser = () => {
                         {/* Left Side: Image */}
                         <div className="w-full lg:w-1/2 mb-8 lg:mb-0">
                             <img
-                                src={RegisterImg} // Replace with your image URL
+                                src={LoginImg}
                                 alt="Landing Page Visual"
                                 className="w-full h-auto rounded-lg"
                             />
@@ -96,12 +98,21 @@ const RegisterUser = () => {
                                     <div className="mb-6">
                                         <label htmlFor="password"
                                                className="block text-gray-600 font-semibold mb-2">Password</label>
-                                        <input type="password" id="password"
-                                               name="password"
-                                               value={user.password}
-                                               onChange={updateInput}
-                                               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600"
-                                               placeholder="Enter password" required/>
+                                        <div className="relative">
+                                            <input type={showPassword ? "text" : "password"} id="password"
+                                                   name="password"
+                                                   value={user.password}
+                                                   onChange={updateInput}
+                                                   className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                                                   placeholder="Enter password" required/>
+                                            <button type="button"
+                                                    onClick={() => setShowPassword(prev => !prev)}
+                                                    aria-label={showPassword ? "Hide password" : "Show password"}
+                                                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">
+                                                {showPassword ? <EyeSlashIcon className="h-5 w-5"/> :
+                                                    <EyeIcon className="h-5 w-5"/>}
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <button type="submit"

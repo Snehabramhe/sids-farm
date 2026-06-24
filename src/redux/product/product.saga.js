@@ -1,11 +1,11 @@
 import {takeLatest, call, put} from "redux-saga/effects";
-import {productActions, productFeatureKey} from "./product.slice.js";
+import {productActions} from "./product.slice.js";
 import {ProductService} from "../../services/product-service.js";
 
 
-function* getAllProducts() {
+function* getAllProducts(action) {
     try {
-        const response = yield call(ProductService.getAllProducts); // call the server for getting all products
+        const response = yield call(ProductService.getAllProducts, action.payload); // optional {page, limit}
         if (response.status === 200) {
             yield put(productActions.getAllProductsSuccess(response.data)); // call slice for success
         }

@@ -6,14 +6,8 @@ const {tokenVerifierMiddleware} = require("../middlewares/tokenVerifier.middlewa
 
 const addressRouter = express.Router();
 
-/**
- * @usage : Add New Address
- * @url : http://localhost:9000/api/addresses/
- * @method : POST
- * @params : mobile, flat, buildingName, landmark, area, city, state, country, zipcode
- * @access : private
- */
-addressRouter.post('/', [
+// Shared validation rules for create/update address.
+const addressValidationRules = [
     body('mobile').notEmpty().withMessage('Mobile is required'),
     body('flat').notEmpty().withMessage('Flat is required'),
     body('buildingName').notEmpty().withMessage('Building Name is required'),
@@ -23,9 +17,16 @@ addressRouter.post('/', [
     body('state').notEmpty().withMessage('State is required'),
     body('country').notEmpty().withMessage('Country is required'),
     body('zipcode').notEmpty().withMessage('ZipCode is required'),
-], formValidationMiddleware, tokenVerifierMiddleware, createAddress)
+];
 
-
+/**
+ * @usage : Add New Address
+ * @url : http://localhost:9000/api/addresses/
+ * @method : POST
+ * @params : mobile, flat, buildingName, landmark, area, city, state, country, zipcode
+ * @access : private
+ */
+addressRouter.post('/', addressValidationRules, formValidationMiddleware, tokenVerifierMiddleware, createAddress)
 
 /**
  * @usage : Update Address
@@ -34,17 +35,7 @@ addressRouter.post('/', [
  * @params : mobile, flat, buildingName, landmark, area, city, state, country, zipcode
  * @access : private
  */
-addressRouter.put('/:addressId', [
-    body('mobile').notEmpty().withMessage('Mobile is required'),
-    body('flat').notEmpty().withMessage('Flat is required'),
-    body('buildingName').notEmpty().withMessage('Building Name is required'),
-    body('landmark').notEmpty().withMessage('Landmark is required'),
-    body('area').notEmpty().withMessage('Area is required'),
-    body('city').notEmpty().withMessage('City is required'),
-    body('state').notEmpty().withMessage('State is required'),
-    body('country').notEmpty().withMessage('Country is required'),
-    body('zipcode').notEmpty().withMessage('ZipCode is required'),
-], formValidationMiddleware,tokenVerifierMiddleware, updateAddress)
+addressRouter.put('/:addressId', addressValidationRules, formValidationMiddleware, tokenVerifierMiddleware, updateAddress)
 
 /**
  * @usage : Delete an Address

@@ -1,7 +1,8 @@
 import axios from "axios";
+import {API_BASE_URL} from "../config.js";
 
 export class UserService {
-    static url = "http://localhost:9000/api/users";
+    static url = `${API_BASE_URL}/api/users`;
 
     static registerUser(user) {
         return axios.post(`${UserService.url}/register`, user);

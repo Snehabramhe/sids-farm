@@ -5,16 +5,44 @@ const {ProductsTable} = require('../database/schema/product.schema');
 
 /**
  * @usage : Get all products from DB
- * @url : http://127.0.0.1:9000/api/products/
+ * @url : http://127.0.0.1:9000/api/products/?page=1&limit=8
  * @method : GET
- * @params : NA
+ * @params : page, limit (both optional)
+ *
+ * When `page` is supplied the response is paginated:
+ *   { products, total, page, totalPages }
+ * When it is omitted, every product is returned as a plain array
+ * (kept for the admin screen which lists all products at once).
  */
 const getAllProducts = async (request, response) => {
-     const dbResponse = await ProductsTable.find({}).sort({ createdAt: -1 });
-     if(!dbResponse) {
-         return response.status(404).json({message: 'No products found!'});
-     }
-    return response.status(200).json(dbResponse);
+    try {
+        const sort = {createdAt: -1};
+
+        // No page param -> return the full list (back-compatible).
+        if (!request.query.page) {
+            const products = await ProductsTable.find({}).sort(sort);
+            return response.status(200).json(products);
+        }
+
+        const page = Math.max(1, parseInt(request.query.page, 10) || 1);
+        const limit = Math.max(1, parseInt(request.query.limit, 10) || 8);
+        const skip = (page - 1) * limit;
+
+        const [products, total] = await Promise.all([
+            ProductsTable.find({}).sort(sort).skip(skip).limit(limit),
+            ProductsTable.countDocuments({}),
+        ]);
+
+        return response.status(200).json({
+            products,
+            total,
+            page,
+            totalPages: Math.ceil(total / limit),
+        });
+    } catch (error) {
+        console.log(error);
+        return response.status(500).json({message: 'Something went wrong'});
+    }
 }
 
 /**

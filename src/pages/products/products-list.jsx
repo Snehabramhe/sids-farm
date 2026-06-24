@@ -1,95 +1,83 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import PageLoader from "../../ui/PageLoader.jsx";
 import ErrorMessage from "../../ui/ErroMessage.jsx";
-import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {productActions, productFeatureKey} from "../../redux/product/product.slice.js";
+import {
+    productActions,
+    productFeatureKey,
+    selectHasMoreProducts,
+} from "../../redux/product/product.slice.js";
 import Navbar from "../../components/navbar.jsx";
-import {cartActions} from "../../redux/cart/cart.slice.js";
+import ProductCard from "../../components/ProductCard.jsx";
+
+const PAGE_SIZE = 8;
 
 const ProductList = () => {
-    const navigate = useNavigate();
     const dispatch = useDispatch();
-    /**
-     * get data from redux store
-     */
-    const productState = useSelector(state => state[productFeatureKey]);
+    const [page, setPage] = useState(1);
 
+    const {loading, products, error, total} = useSelector(state => state[productFeatureKey]);
+    const hasMore = useSelector(selectHasMoreProducts);
 
     useEffect(() => {
-        dispatch(productActions.getAllProducts());
+        // Fresh first page whenever the page mounts.
+        setPage(1);
+        dispatch(productActions.getAllProducts({page: 1, limit: PAGE_SIZE}));
     }, []);
 
-    const {loading, products, error} = productState;
+    const loadMore = () => {
+        const nextPage = page + 1;
+        setPage(nextPage);
+        dispatch(productActions.getAllProducts({page: nextPage, limit: PAGE_SIZE}));
+    };
 
-    if (loading) {
+    // Only block the whole screen on the very first load.
+    if (loading && products.length === 0) {
         return <PageLoader/>;
     }
 
     if (!loading && error) {
-        return <ErrorMessage message={error.message}/>
+        return <ErrorMessage message={error.message}/>;
     }
-
-    const clickAddToCart = (product) => {
-        dispatch(cartActions.addToCart({
-            product: {
-                ...product,
-                count: 1
-            }
-        }));
-    };
 
     return (
         <>
             <Navbar/>
-            <div className="m-5 flex flex-row max-w-full">
-                <div className="grid grid-cols-4 gap-4 p-4">
-                    {
-                        !loading && products.map((product) => (
-                            <div key={product._id}
-                                 className="max-w-sm  bg-white border border-gray-200 rounded-lg shadow-md ">
-                                {/* Product Image */}
-                                <img
-                                    onClick={() => navigate(`/products/view-product/${product._id}`)}
-                                    className="rounded-t-lg w-full object-cover cursor-pointer"
-                                    src={product.imageUrl}
-                                />
+            <div className="bg-gray-50 min-h-screen">
+                <div className="container mx-auto px-4 py-8">
+                    <div className="flex items-end justify-between mb-6">
+                        <div>
+                            <h1 className="text-3xl font-bold text-gray-800">Our Products</h1>
+                            <p className="text-gray-500 mt-1">Farm-fresh dairy delivered to your door</p>
+                        </div>
+                        {total > 0 && <span className="text-sm text-gray-500">{total} products</span>}
+                    </div>
 
-                                {/* Product Content */}
-                                <div className="p-4">
-                                    {/* Product Title */}
-                                    <h2 className="text-lg font-semibold text-gray-800 mb-2">
-                                        {product.productName}
-                                    </h2>
+                    {products.length === 0 ? (
+                        <p className="text-center text-gray-500 py-20">No products available right now.</p>
+                    ) : (
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            {products.map(product => (
+                                <ProductCard key={product._id} product={product}/>
+                            ))}
+                        </div>
+                    )}
 
-                                    {/* Product Description */}
-                                    <p className="text-gray-600 text-sm mb-3">{product.nutritionalInfo}</p>
-
-                                    {/* Price and Details */}
-                                    <pre>Fat : {product.fat}</pre>
-                                    <pre>Protein : {product.protein}</pre>
-                                    <pre>Energy : {product.energy}</pre>
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-lg font-bold text-blue-600">
-                                                                &#8377; {Number(product.price)?.toFixed(2)}
-                                         </span>
-
-
-                                    </div>
-                                    <div className="mt-3">
-                                        <button onClick={() => clickAddToCart(product)}
-                                                className="bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-700 transition duration-300">
-                                            Add to Cart
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        ))
-                    }
+                    {hasMore && (
+                        <div className="flex justify-center mt-10">
+                            <button
+                                onClick={loadMore}
+                                disabled={loading}
+                                className="bg-gray-800 hover:bg-gray-900 disabled:opacity-60 text-white px-8 py-3 rounded-lg font-medium transition-colors"
+                            >
+                                {loading ? 'Loading...' : 'Load More'}
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
-
         </>
-    )
-}
+    );
+};
+
 export default ProductList;

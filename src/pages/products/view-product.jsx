@@ -5,94 +5,137 @@ import ErrorMessage from "../../ui/ErroMessage.jsx";
 import {useDispatch, useSelector} from "react-redux";
 import {productActions, productFeatureKey} from "../../redux/product/product.slice.js";
 import Navbar from "../../components/navbar.jsx";
-import {ArrowLeftCircleIcon} from "@heroicons/react/24/solid/index.js";
-import {cartActions} from "../../redux/cart/cart.slice.js";
+import {ArrowLeftIcon} from "@heroicons/react/24/solid/index.js";
+import {cartActions, cartFeatureKey} from "../../redux/cart/cart.slice.js";
+
+const FALLBACK_IMAGE = 'https://placehold.co/600x600?text=Sids+Farm';
 
 const ViewProduct = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const {productId} = useParams();
 
-    /**
-     * get product Data from server
-     */
-    const productData = useSelector(state => state[productFeatureKey]);
+    const {loading, product, error} = useSelector(state => state[productFeatureKey]);
+    const isInCart = useSelector(state =>
+        state[cartFeatureKey].cartItems.some(item => item._id === productId)
+    );
 
-    /**
-     * get the product data, when the page is rendered fully
-     */
     useEffect(() => {
         if (productId) {
-            dispatch(productActions.getProductById({productId: productId}));
+            dispatch(productActions.getProductById({productId}));
         }
     }, [productId]);
-
-    const {loading, product, error} = productData;
 
     if (loading) {
         return <PageLoader/>;
     }
 
     if (!loading && error) {
-        return <ErrorMessage message={error.message}/>
+        return <ErrorMessage message={error.message}/>;
     }
 
-    const clickAddToCart = (product) => {
-        dispatch(cartActions.addToCart({
-            product: {
-                ...product,
-                count: 1
-            }
-        }));
+    const clickAddToCart = () => {
+        dispatch(cartActions.addToCart({product: {...product, count: 1}}));
+    };
+
+    const handleImageError = (e) => {
+        if (e.target.src !== FALLBACK_IMAGE) {
+            e.target.src = FALLBACK_IMAGE;
+        }
     };
 
     return (
         <>
             <Navbar/>
-            {
-                product && <div className="flex items-center justify-center min-h-screen bg-gray-100">
-                    <div className="container mx-auto px-6 lg:px-20">
-                        <div className="flex flex-col lg:flex-row items-center">
-                            {/* Left Side: Image */}
-                            <div className="w-full lg:w-1/2 mb-8 lg:mb-0">
-                                <img
-                                    src={product.imageUrl} // Replace with your image URL
-                                    alt="Landing Page Visual"
-                                    className="w-full h-auto rounded-lg shadow-lg"
-                                />
-                            </div>
+            <div className="bg-gray-50 min-h-screen">
+                <div className="container mx-auto px-4 py-8">
+                    {/* Breadcrumb / back */}
+                    <button onClick={() => navigate('/products/show-product')}
+                            className="inline-flex items-center gap-2 text-gray-600 hover:text-green-600 mb-6 transition-colors">
+                        <ArrowLeftIcon className="h-5 w-5"/>
+                        <span>Back to Products</span>
+                    </button>
 
-                            {/* Right Side: Header and Text */}
-                            <div className="w-full lg:w-1/2 lg:pl-12">
-                                <button onClick={() => navigate('/products/show-product')}
-                                        className="bg-black mt-3 text-white px-4 py-2 rounded-md hover:bg-black transition duration-300">
-                                    <ArrowLeftCircleIcon className="size-6 text-white"/>
-                                </button>
-                                <h1 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-6 leading-tight mt-3">
-                                    {product.productName}
-                                </h1>
-                                <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                                    {product.nutritionalInfo}
-                                </p>
-                                <span className="text-lg font-bold text-blue-600">
-                                                &#8377; {Number(product.price)?.toFixed(2)}
-                         </span>
-                                <pre>Fat : {product.fat}</pre>
-                                <pre>Protein : {product.protein}</pre>
-                                <pre>Energy : {product.energy}</pre>
-                                <div>
-                                    <button onClick={() => clickAddToCart(product)}
-                                            className="bg-orange-500 text-white px-3 mt-3 py-1 rounded hover:bg-orange-700 transition duration-300">
-                                        Add to Cart
-                                    </button>
+                    {product && Object.keys(product).length > 0 && (
+                        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 lg:p-10">
+                                {/* Image */}
+                                <div className="rounded-xl overflow-hidden bg-gray-50">
+                                    <img
+                                        src={product.imageUrl || FALLBACK_IMAGE}
+                                        onError={handleImageError}
+                                        alt={product.productName}
+                                        className="w-full h-72 lg:h-[460px] object-cover"
+                                    />
+                                </div>
+
+                                {/* Details */}
+                                <div className="flex flex-col">
+                                    <span className="inline-block w-fit bg-green-50 text-green-700 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                                        Farm Fresh
+                                    </span>
+                                    <h1 className="text-3xl font-bold text-gray-900 mb-3">
+                                        {product.productName}
+                                    </h1>
+                                    <p className="text-gray-600 leading-relaxed mb-6">
+                                        {product.nutritionalInfo}
+                                    </p>
+
+                                    {/* Price */}
+                                    <div className="flex items-baseline gap-3 mb-6">
+                                        <span className="text-4xl font-bold text-gray-900">
+                                            &#8377;{Number(product.price)?.toFixed(2)}
+                                        </span>
+                                        <span className="text-sm text-gray-400">incl. all taxes</span>
+                                    </div>
+
+                                    {/* Nutrition */}
+                                    <div className="mb-8">
+                                        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                                            Nutritional Value
+                                        </h3>
+                                        <div className="grid grid-cols-3 gap-3">
+                                            <div className="bg-green-50 rounded-xl p-4 text-center">
+                                                <p className="text-2xl font-bold text-green-700">{product.energy}</p>
+                                                <p className="text-xs text-gray-500 mt-1">Energy (kcal)</p>
+                                            </div>
+                                            <div className="bg-blue-50 rounded-xl p-4 text-center">
+                                                <p className="text-2xl font-bold text-blue-700">{product.protein}</p>
+                                                <p className="text-xs text-gray-500 mt-1">Protein (g)</p>
+                                            </div>
+                                            <div className="bg-amber-50 rounded-xl p-4 text-center">
+                                                <p className="text-2xl font-bold text-amber-700">{product.fat}</p>
+                                                <p className="text-xs text-gray-500 mt-1">Fat (g)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div className="mt-auto flex flex-col sm:flex-row gap-3">
+                                        {isInCart ? (
+                                            <button onClick={() => navigate('/carts/page')}
+                                                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-3 rounded-xl transition-colors">
+                                                Go to Cart
+                                            </button>
+                                        ) : (
+                                            <button onClick={clickAddToCart}
+                                                    className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-medium px-6 py-3 rounded-xl transition-colors">
+                                                Add to Cart
+                                            </button>
+                                        )}
+                                        <button onClick={() => navigate('/carts/page')}
+                                                className="flex-1 border border-gray-300 hover:bg-gray-50 text-gray-800 font-medium px-6 py-3 rounded-xl transition-colors">
+                                            View Cart
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    )}
                 </div>
-            }
-
+            </div>
         </>
-    )
-}
+    );
+};
+
 export default ViewProduct;

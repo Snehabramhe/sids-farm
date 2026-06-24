@@ -5,6 +5,7 @@ import {PAYMENT_OPTIONS} from "../constants/constants.js";
 import {Link} from "react-router-dom";
 import Navbar from "./navbar.jsx";
 import {paymentActions} from "../redux/payment/payment.slice.js";
+import {cartActions} from "../redux/cart/cart.slice.js";
 
 const orderInfo = JSON.parse(localStorage.getItem('order'));
 const PaymentSuccess = (props) => {
@@ -26,6 +27,7 @@ const PaymentSuccess = (props) => {
 
     useEffect(() => {
         if (isOrderPlaced) {
+            dispatch(cartActions.clearCart());
             dispatch(paymentActions.resetClientSecret());
             dispatch(orderActions.resetPlaceOrder());
             localStorage.removeItem('order');

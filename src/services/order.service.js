@@ -1,7 +1,8 @@
 import axios from "axios";
+import {API_BASE_URL} from "../config.js";
 
 export class OrderService {
-    static url = "http://localhost:9000/api/orders";
+    static url = `${API_BASE_URL}/api/orders`;
 
     static placeAnOrder(order) {
         return axios.post(`${OrderService.url}/place`, order);

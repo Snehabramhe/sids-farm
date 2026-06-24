@@ -10,13 +10,10 @@ const orderRouter = express.Router();
  * @usage : place an order
  * @url : http://localhost:9000/api/orders/place
  * @method : POST
- * @params: cartObj, paymentOption
+ * @params: products, tax, total, paymentOption
  * @access : private
  */
-orderRouter.post("/place", [
-    body('cartObj').notEmpty().withMessage('Cart Obj is Required'),
-    body('paymentOption').notEmpty().withMessage('Cart Obj is Required')
-],tokenVerifierMiddleware,tokenVerifierMiddleware, placeOrder);
+orderRouter.post("/place", tokenVerifierMiddleware, placeOrder);
 
 /**
  * @usage : update Order Status

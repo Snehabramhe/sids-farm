@@ -3,7 +3,7 @@ import {useStripe, useElements, PaymentElement} from "@stripe/react-stripe-js";
 import {loadStripe} from "@stripe/stripe-js";
 import {ToastMessageUtil} from "../util/ToastMessageUtil.js";
 
-const stripePromise = loadStripe("pk_test_51SvESd4FKiRkbbviDXiofloZNjFFpQycP14zZv0yHNeWSVMcCjYRThG6jrQmeM6l0ecCBPy4njJFVr3cdbVKO6rG00UdFFbuqF");
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const PaymentsForm = () => {
     const stripe = useStripe();
@@ -18,7 +18,7 @@ const PaymentsForm = () => {
 
         const {error, paymentIntent} = await stripe.confirmPayment({
             elements,
-            confirmParams: {return_url: "http://localhost:5173/payments/payment-success"},
+            confirmParams: {return_url: import.meta.env.VITE_PAYMENT_RETURN_URL},
         });
 
         if (error) {

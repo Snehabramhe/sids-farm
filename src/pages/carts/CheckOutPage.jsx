@@ -79,7 +79,10 @@ const CheckOutPage = () => {
             }));
             setOpenPaymentsModel(true);
             const moneyObj = {
-                amount: (tax + total) * 100, // 100 paisa = 1 rupee
+                // Stripe requires an integer amount in the smallest currency unit
+                // (paise). Math.round avoids floating-point values like 22287.9999
+                // which Stripe rejects with a 500.
+                amount: Math.round((tax + total) * 100), // 100 paisa = 1 rupee
                 currency: 'inr'
             }
             dispatch(paymentActions.makePayment({
@@ -90,7 +93,7 @@ const CheckOutPage = () => {
 
     useEffect(() => {
         if (isOrderPlaced) {
-            dispatch(cartActions.getCartInfo());
+            dispatch(cartActions.clearCart());
             navigate('/orders/me');
         }
         return () => {

@@ -22,7 +22,11 @@ const CartPage = () => {
         if (cartItems.length === 0) {
             dispatch(cartActions.getCartInfo());
         }
-    }, [cartItems])
+        // run once on mount: fetch the cart from the server if it's empty.
+        // depending on `cartItems` here causes an infinite fetch loop, because
+        // an empty server cart re-assigns cartItems to a new [] reference.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     const calculateSubTotal = () => {
         let total = 0;

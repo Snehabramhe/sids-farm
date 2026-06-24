@@ -7,6 +7,9 @@ const initialState = {
     products: [],
     error: null,
     product: {},
+    page: 1,
+    totalPages: 1,
+    total: 0,
     createProductSuccess: false,
     updateProductSuccess: false,
     deleteProductSuccess: false,
@@ -28,7 +31,23 @@ const productSlice = createSlice({
         },
         getAllProductsSuccess: (state, action) => {
             state.loading = false;
-            state.products = action.payload;
+            const payload = action.payload;
+            if (Array.isArray(payload)) {
+                // Non-paginated response (admin screen) — replace the whole list.
+                state.products = payload;
+                state.page = 1;
+                state.totalPages = 1;
+                state.total = payload.length;
+            } else {
+                // Paginated response — append when loading a further page,
+                // otherwise replace (fresh first page).
+                state.products = payload.page > 1
+                    ? [...state.products, ...payload.products]
+                    : payload.products;
+                state.page = payload.page;
+                state.totalPages = payload.totalPages;
+                state.total = payload.total;
+            }
         },
         getAllProductsFailure: (state, action) => {
             state.loading = false;
@@ -125,6 +144,9 @@ const productSlice = createSlice({
 });
 
 
+export const selectProducts = state => state[productFeatureKey].products;
+export const selectHasMoreProducts = state => state[productFeatureKey].page < state[productFeatureKey].totalPages;
+export const selectProductPage = state => state[productFeatureKey].page;
 export const selectUpdateProductSuccess = state => state[productFeatureKey].updateProductSuccess;
 export const selectDeleteProductSuccess = state => state[productFeatureKey].deleteProductSuccess;
 export const selectGetProductSuccess = state => state[productFeatureKey].getProductSuccess;

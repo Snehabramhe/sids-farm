@@ -10,7 +10,6 @@ const cartSchema = new mongoose.Schema({
             protein: {type: Number, required: true},
             fat: {type: Number, required: true},
             nutritionalInfo: {type: String, required: true},
-            quantity: {type: Number, required: true},
             count: {type: Number, required: true},
         }
     ],

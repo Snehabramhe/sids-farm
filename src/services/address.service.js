@@ -1,7 +1,8 @@
 import axios from "axios";
+import {API_BASE_URL} from "../config.js";
 
 export class AddressService {
-    static url = "http://localhost:9000/api/addresses";
+    static url = `${API_BASE_URL}/api/addresses`;
 
     static createAddress(address) {
         return axios.post(`${AddressService.url}/`, address);

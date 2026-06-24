@@ -9,9 +9,26 @@ import {ToastMessageUtil} from "../../util/ToastMessageUtil.js";
 
 export const cartFeatureKey = 'cart';
 
+export const CART_STORAGE_KEY = 'sidsfarm_cart_items';
+
+/**
+ * Hydrate the cart items from localStorage so the cart survives a page
+ * refresh. Items added to the cart only live in redux until checkout, so
+ * without this the cart would appear empty after every reload.
+ */
+const loadCartItemsFromStorage = () => {
+    try {
+        const persisted = localStorage.getItem(CART_STORAGE_KEY);
+        const parsed = persisted ? JSON.parse(persisted) : [];
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+        return [];
+    }
+};
+
 const initialState = {
     cart: {},
-    cartItems: [],
+    cartItems: loadCartItemsFromStorage(),
     loading: false,
     error: null,
     tax: 0,
@@ -38,6 +55,16 @@ const cartSlice = createSlice({
         deleteCartItem: (state, action) => {
             state.cartItems = deleteCartItemUtil(state, action);
             ToastMessageUtil.showToastMessageInfo('Item deleted from the Cart!');
+        },
+        /**
+         * Empty the cart completely (e.g. after an order is placed). The store
+         * subscriber persists this empty state to localStorage automatically.
+         */
+        clearCart: (state) => {
+            state.cartItems = [];
+            state.cart = {};
+            state.tax = 0;
+            state.total = 0;
         },
         /**
          * Create Cart
@@ -77,10 +104,9 @@ const cartSlice = createSlice({
             state.loading = false;
             if (action.payload?.cart) {
                 if (Object.keys(action.payload?.cart).length === 0) {
-                    state.cartItems = [];
-                    state.tax = 0;
-                    state.total = 0;
-                    state.cart = {};
+                    // The server has no saved cart (user hasn't checked out).
+                    // Keep whatever is in local state (e.g. items added this
+                    // session and persisted to localStorage) instead of wiping it.
                 } else {
                     state.cartItems = action.payload?.cart?.products;
                     state.tax = action.payload?.cart?.tax;

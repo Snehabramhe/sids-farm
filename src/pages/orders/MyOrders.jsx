@@ -92,7 +92,8 @@ const MyOrders = () => {
                                                 {
                                                     order?.products?.map(product => {
                                                         return (
-                                                            <div key={product._id} className="flex items-center space-x-4">
+                                                            <div key={product._id}
+                                                                 className="flex items-center space-x-4 py-3 border-b border-gray-100 last:border-0">
                                                                 <img src={product.imageUrl} alt="Product Image"
                                                                      className="w-20 h-20 object-cover rounded-lg"/>
                                                                 <div>

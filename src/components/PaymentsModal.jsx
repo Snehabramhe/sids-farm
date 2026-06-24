@@ -5,7 +5,7 @@ import PaymentsForm from "./PaymentsForm.jsx";
 import {useSelector} from "react-redux";
 import {selectClientSecret} from "../redux/payment/payment.slice.js";
 
-const stripePromise = loadStripe('pk_test_51SvESd4FKiRkbbviDXiofloZNjFFpQycP14zZv0yHNeWSVMcCjYRThG6jrQmeM6l0ecCBPy4njJFVr3cdbVKO6rG00UdFFbuqF');
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const PaymentsModal = ({isOpen, setOpen}) => {
     const clientSecretCode = useSelector(selectClientSecret);
